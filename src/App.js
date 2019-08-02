@@ -1,26 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
+import CardList from './components/card-list/CardList'
+import SearchBox from './components/search-box/SearchBox'
 import './App.css';
 
-function App() {
-  return (
+class App extends React.Component {
+
+  state = {
+    users: [],
+    searchField: ''
+  }
+
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+    .then(res => res.json())
+    .then(data => this.setState({users: data}))
+  }
+
+  render() {
+    const { users, searchField } = this.state
+    const filteredUsers = users.filter(user => 
+      user.username.toLowerCase().includes(searchField.toLowerCase())
+    )
+    return(
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Monster Users</h1>
+      <SearchBox
+        placeholder="search users"
+        handleChange={e => this.setState({searchField: e.target.value})}
+      />
+      <CardList users={filteredUsers}/>        
     </div>
-  );
+    )
+  }
 }
+
 
 export default App;
